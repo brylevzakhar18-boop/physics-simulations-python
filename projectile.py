@@ -25,7 +25,7 @@ def simulate_projectile(v0, angle_deg, g=9.81, dt=0.01):
 
 
 # --- main ---
-t, x, y = simulate_projectile(v0=20, angle_deg=45)
+t, x, y = simulate_projectile(v0=20, angle_deg=35)
 
 plt.plot(x, y)
 plt.xlabel("x (m)")
