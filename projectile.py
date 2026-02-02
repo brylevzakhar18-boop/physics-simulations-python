@@ -1,0 +1,1 @@
+print("Projectile simulation works")
