@@ -1,0 +1,111 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def simulate_projectile(v0: float, angle_deg: float, g: float = 9.81, dt: float = 0.01):
+    """
+    Simulate projectile motion without air resistance.
+    Returns arrays: t, x, y, vx, vy, speed
+    """
+    theta = np.deg2rad(angle_deg)
+
+    vx0 = v0 * np.cos(theta)
+    vy0 = v0 * np.sin(theta)
+
+    t_list = [0.0]
+    x_list = [0.0]
+    y_list = [0.0]
+    vx_list = [vx0]
+    vy_list = [vy0]
+
+    # Integrate until projectile hits the ground (y < 0)
+    while True:
+        t = t_list[-1] + dt
+        x = x_list[-1] + vx_list[-1] * dt
+        y = y_list[-1] + vy_list[-1] * dt
+
+        vx = vx_list[-1]  # constant
+        vy = vy_list[-1] - g * dt
+
+        t_list.append(t)
+        x_list.append(x)
+        y_list.append(y)
+        vx_list.append(vx)
+        vy_list.append(vy)
+
+        if y < 0:
+            break
+
+        # Safety limit (in case something goes wrong)
+        if t > 60:
+            break
+
+    t_arr = np.array(t_list)
+    x_arr = np.array(x_list)
+    y_arr = np.array(y_list)
+    vx_arr = np.array(vx_list)
+    vy_arr = np.array(vy_list)
+    speed_arr = np.sqrt(vx_arr**2 + vy_arr**2)
+
+    return t_arr, x_arr, y_arr, vx_arr, vy_arr, speed_arr
+
+
+def main():
+    # Parameters
+    g = 9.81
+    v0 = 30.0          # initial speed (m/s)
+    dt = 0.01          # time step (s)
+
+    angles = [15, 30, 45, 60, 75]  # degrees
+
+    # --- Graph 1: Trajectories y(x) for multiple angles ---
+    plt.figure()
+    for a in angles:
+        t, x, y, vx, vy, speed = simulate_projectile(v0=v0, angle_deg=a, g=g, dt=dt)
+        plt.plot(x, y, label=f"{a}°")
+    plt.title("Projectile motion: trajectory y(x)")
+    plt.xlabel("x (m)")
+    plt.ylabel("y (m)")
+    plt.grid(True)
+    plt.legend()
+
+    # --- Graph 2: x(t) and y(t) for multiple angles ---
+    plt.figure()
+    for a in angles:
+        t, x, y, vx, vy, speed = simulate_projectile(v0=v0, angle_deg=a, g=g, dt=dt)
+        plt.plot(t, x, label=f"x(t), {a}°")
+    plt.title("Projectile motion: x(t) for different angles")
+    plt.xlabel("t (s)")
+    plt.ylabel("x (m)")
+    plt.grid(True)
+    plt.legend()
+
+    plt.figure()
+    for a in angles:
+        t, x, y, vx, vy, speed = simulate_projectile(v0=v0, angle_deg=a, g=g, dt=dt)
+        plt.plot(t, y, label=f"y(t), {a}°")
+    plt.title("Projectile motion: y(t) for different angles")
+    plt.xlabel("t (s)")
+    plt.ylabel("y (m)")
+    plt.grid(True)
+    plt.legend()
+
+    # --- Graph 3: vx(t), vy(t), speed(t) for one angle (clean view) ---
+    angle_for_speed = 45
+    t, x, y, vx, vy, speed = simulate_projectile(v0=v0, angle_deg=angle_for_speed, g=g, dt=dt)
+
+    plt.figure()
+    plt.plot(t, vx, label="vx(t)")
+    plt.plot(t, vy, label="vy(t)")
+    plt.plot(t, speed, label="|v(t)|")
+    plt.title(f"Projectile motion: velocities vs time ({angle_for_speed}°)")
+    plt.xlabel("t (s)")
+    plt.ylabel("speed (m/s)")
+    plt.grid(True)
+    plt.legend()
+
+    plt.show()
+
+
+if name == "__main__":
+    main()
